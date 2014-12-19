@@ -11,6 +11,9 @@
 <body>
 
 <div id="main-region" class="container">
+    <div id="stations-region"></div>
+    <div id="trains-region"></div>
+    <div></div>
 </div>
 
 <script type="text/template" id="list-layout">
@@ -18,27 +21,12 @@
 </script>
 
 <script type="text/template" id="station-list">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Code</th>
-        <th>Latitude</th>
-        <th>Longitude</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    </tbody>
+    <div>
+    </div>
 </script>
 
 <script type="text/template" id="station-list-item">
-    <td><%= id %></td>
-    <td><%= name %></td>
-    <td><%= code %></td>
-    <td><%= lat %></td>
-    <td><%= lon %></td>
-    <td><a class="btn" href="#view/<%= code %>">View</a></td>
+    <%= name %>
 </script>
 
 
@@ -88,15 +76,16 @@
 <script src="./assets/js/entities/train.js"></script>
 
 <script src="./assets/js/apps/stations/stations_app.js"></script>
-<script src="./assets/js/apps/stations/list/list_controller.js"></script>
-<script src="./assets/js/apps/stations/list/list_view.js"></script>
+<script src="./assets/js/apps/stations/list/stations_list_controller.js"></script>
+<script src="./assets/js/apps/stations/list/stations_list_view.js"></script>
 
 <script src="./assets/js/apps/trains/trains_app.js"></script>
-<script src="./assets/js/apps/trains/list/list_controller.js"></script>
-<script src="./assets/js/apps/trains/list/list_view.js"></script>
+<script src="./assets/js/apps/trains/list/trains_list_controller.js"></script>
+<script src="./assets/js/apps/trains/list/trains_list_view.js"></script>
 
 <script type="text/javascript">
     TrainViewerApp.start();
+
 </script>
 </body>
 </html>

@@ -13,7 +13,7 @@ TrainViewerApp.module("TrainsApp.List", function (List, TrainViewerApp, Backbone
                     trainListLayout.stationsRegion.show(trainCompView);
                 });
                 console.log("show - trainListLayout");
-                TrainViewerApp.mainRegion.show(trainListLayout);
+                TrainViewerApp.trainsRegion.show(trainListLayout);
 
             });
         }

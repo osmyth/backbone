@@ -2,12 +2,13 @@ TrainViewerApp.module("StationsApp", function (StationsApp, TrainViewerApp, Back
     StationsApp.Router = Marionette.AppRouter.extend({
         appRoutes: {
             "": "listStations",
-            "stations": "listStations"
+            "view/:id": "listTrains"
         }
     });
 
     var API = {
         listStations: function () {
+        console.log("listStations");
             StationsApp.List.Controller.listStations();
         }
     };

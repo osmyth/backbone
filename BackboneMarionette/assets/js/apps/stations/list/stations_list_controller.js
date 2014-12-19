@@ -13,7 +13,7 @@ TrainViewerApp.module("StationsApp.List", function (List, TrainViewerApp, Backbo
                     stationListLayout.stationsRegion.show(stationCompView);
                 });
                 console.log("show - stationListLayout");
-                TrainViewerApp.mainRegion.show(stationListLayout);
+                TrainViewerApp.stationsRegion.show(stationListLayout);
 
             });
         }

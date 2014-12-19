@@ -1,7 +1,8 @@
 var TrainViewerApp = new Marionette.Application();
 
 TrainViewerApp.addRegions({
-    mainRegion: "#main-region"
+    stationsRegion: "#stations-region",
+    trainsRegion: "#trains-region"
 });
 
 TrainViewerApp.navigate = function (route, options) {

@@ -7,6 +7,7 @@ TrainViewerApp.module("TrainsApp", function (TrainsApp, TrainViewerApp, Backbone
 
     var API = {
         listTrains: function (code) {
+            console.log("listTrains");
             TrainsApp.List.Controller.listTrains(code);
         }
     };
