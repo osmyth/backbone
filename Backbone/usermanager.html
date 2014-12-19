@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Manager</title>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/css/bootstrap.min.css">
+
+    <style>
+        font.hilight {
+            background-color: yellow;
+        }
+
+        input.search-input {
+            margin-bottom: 0px;
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container">
+    <h1>User Manager</h1>
+    <hr/>
+    <div class="page"></div>
+</div>
+
+</ul>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.4.2/underscore-min.js"></script>
+<script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.9.2/backbone-min.js"></script>
+
+<script type="text/template" id="user-list-template">
+    <a href="#/new" class="btn btn-primary">New</a>
+    <input class="search-input" type="text" placeholder="Search...">
+    <hr/>
+    <table class="table striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Age</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <%_.each(users, function(user) { %>
+        <tr>
+            <td><%= user.get('id') %></td>
+            <td><%= user.get('firstName') %></td>
+            <td><%= user.get('lastName') %></td>
+            <td><%= user.get('age') %></td>
+            <td><a class="btn" href="#/edit/<%= user.id %>">Edit</a></td>
+        </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</script>
+
+<script type="text/template" id="edit-user-template">
+    <form class="edit-user-form" method="POST">
+        <legend><%= user ? 'Edit' : 'New' %> User</legend>
+        <label>ID</label>
+        <input class="user-id" name="id" type="text" value="<%= user ? user.get('id') : nextId %>" disabled>
+        <label>First Name</label>
+        <input class="user-firstname" name="firstname" type="text" value="<%= user ? user.get('firstName') : '' %>">
+        <label>Last Name</label>
+        <input class="user-lastname" name="lastname" type="text" value="<%= user ? user.get('lastName') : '' %>">
+        <label>Age</label>
+        <input class="user-age" name="age" type="text" value="<%= user ? user.get('age') : '' %>">
+        <hr/>
+        <button type="submit" class="btn submit"><%= user ? 'Update' : 'Create' %></button>
+        <button class="btn cancel">Cancel</button>
+        <% if(user) { %>
+        <input type="hidden" name="id" value="<%= user.id %>"/>
+        <button data-user-id="<%= user.id %>" class="btn btn-danger delete">Delete</button>
+        <% }; %>
+    </form>
+</script>
+
+<script>
+    (function ($) {
+
+        /* Utility Functions */
+        var getNextID = function (collection) {
+            var maxId = 0;
+            for (index in collection.models) {
+                if (collection.models[index].id > maxId) {
+                    maxId = collection.models[index].id;
+                }
+            }
+
+            var nextId = parseInt(maxId) + 1;
+
+            return nextId;
+        }
+
+        var getModelWithIdFromCollection = function (id, collection) {
+            return collection.find(function (model) {
+                return model.get('id') == id;
+            });
+        }
+
+        /* Backbone Models*/
+
+        var UserModel = Backbone.Model.extend({
+            id: null,
+            firstName: null,
+            lastName: null,
+            age: null
+        });
+
+        /* Backbone Collections */
+
+        var UserCollection = Backbone.Collection.extend({
+            initialize: function (models, options) {
+                this.bind("add", options.view.addUserLi);
+
+                var userModel = new UserModel({id: 100, firstName: "Oliver", lastName: "Smyth", age: 30});
+                this.add(userModel);
+                userModel = new UserModel({id: 101, firstName: "Tom", lastName: "Coleman", age: 30});
+                this.add(userModel);
+                userModel = new UserModel({id: 102, firstName: "Neil", lastName: "McNabola", age: 30});
+                this.add(userModel);
+                userModel = new UserModel({id: 103, firstName: "Vincent", lastName: "Schaeken", age: 30});
+                this.add(userModel);
+                userModel = new UserModel({id: 104, firstName: "John", lastName: "Zanchetta", age: 30});
+                this.add(userModel);
+            }
+        });
+
+        var userCollection = new UserCollection(null, {view: this});
+
+        /* Backbone Views*/
+
+        var AddUserView = Backbone.View.extend({
+            el: $(".page"),
+            render: function () {
+                console.log(userCollection);
+                var template = _.template($('#user-list-template').html(), {users: userCollection.models});
+                this.$el.html(template);
+            }
+        });
+
+        var addUserView = new AddUserView();
+
+        var EditUserView = Backbone.View.extend({
+            el: '.page',
+            events: {
+                'click .submit': 'saveUser',
+                'click .cancel': 'cancelEdit',
+                'click .delete': 'deleteUser'
+            },
+            saveUser: function (event) {
+                console.log("Saving...");
+                event.preventDefault();
+
+                var userForm = $(".edit-user-form");
+                var id = userForm.find($("input.user-id")).attr('value');
+                var firstName = userForm.find($("input.user-firstname")).attr('value');
+                var lastName = userForm.find($("input.user-lastname")).attr('value');
+                var age = userForm.find($("input.user-age")).attr('value');
+
+                var userModel = getModelWithIdFromCollection(id, userCollection);
+                userCollection.remove(userModel);
+
+                var userModel = new UserModel({
+                    id: id,
+                    firstName: firstName,
+                    lastName: lastName,
+                    age: age
+                });
+                userCollection.add(userModel);
+                router.navigate('', {trigger: true});
+            },
+            cancelEdit: function (event) {
+                console.log("Canceling...");
+                event.preventDefault();
+                router.navigate('', {trigger: true});
+            },
+            deleteUser: function (event) {
+                console.log("Deleting...");
+                event.preventDefault();
+
+                var userForm = $(".edit-user-form");
+                var id = userForm.find($("input.user-id")).attr('value');
+
+                var userModel = getModelWithIdFromCollection(id, userCollection);
+                userCollection.remove(userModel);
+                router.navigate('', {trigger: true});
+            },
+            render: function (options) {
+                var user = getModelWithIdFromCollection(options.id, userCollection);
+                var template = _.template($('#edit-user-template').html(), {user: user, nextId: getNextID(userCollection)});
+                this.$el.html(template);
+            }
+
+        });
+
+        var editUserView = new EditUserView();
+
+        var Router = Backbone.Router.extend({
+            routes: {
+                "": "home",
+                "home": "home",
+                "edit/:id": "edit",
+                "new": "edit"
+            },
+            home: function () {
+                addUserView.render();
+            },
+            edit: function (id) {
+                editUserView.render({id: id});
+            }
+        });
+
+        var router = new Router;
+//        router.on('route:home', function () {
+//            addUserView.render();
+//        })
+//        router.on('route:edit', function (id) {
+//            editUserView.render({id: id});
+//        })
+        Backbone.history.start();
+
+        /* add event listner on searh input*/
+        $('.search-input').keyup(function (event) {
+            var searchString = this.value.trim();
+            console.log(searchString);
+
+            var rows = $(".table").find("tr")
+
+            rows.each(function (index1, row) {
+
+                $("td", this).each(function (index2, cell) {
+                    if (cell.innerHTML.indexOf('<a') == -1) {
+                        cell.innerHTML = highlightText(searchString, cell.innerText);
+                    }
+                });
+            })
+        });
+
+        highlightText = function (searchString, text) {
+            var index = text.toLowerCase().indexOf(searchString.toLowerCase());
+            if (index != -1) {
+
+                var start = text.substr(0, index);
+                var middle = text.substr(index, searchString.length);
+                var end = text.substr(index + searchString.length, text.length);
+
+                if (end.length < text.length) {
+                    text = start + "<font class='hilight'>" + middle + "</font>" + end;
+                }
+            }
+            return text;
+        }
+
+    })(jQuery);
+</script>
+</body>
+</html>

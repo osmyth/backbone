@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stations</title>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.1.1/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="page"></div>
+</div>
+
+</ul>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.4.2/underscore-min.js"></script>
+<script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+
+<script type="text/template" id="station-list-template">
+    <table class="table striped">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>code</th>
+            <th>lat</th>
+            <th>lon</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <%_.each(stations, function(station) { %>
+        <tr>
+            <td><%= station.get('id') %></td>
+            <td><%= station.get('name') %></td>
+            <td><%= station.get('code') %></td>
+            <td><%= station.get('lat') %></td>
+            <td><%= station.get('lon') %></td>
+            <td><a class="btn" href="#/view/<%= station.get('code') %>">View</a></td>
+        </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</script>
+
+<script type="text/template" id="train-list-template">
+    <table class="table striped">
+        <thead>
+        <tr>
+            <th>direction</th>
+            <th>due in</th>
+            <th>expected arrival</th>
+            <th>last location</th>
+            <th>destination</th>
+            <th>status</th>
+            <th>late</th>
+        </tr>
+        </thead>
+        <tbody>
+        <%_.each(trains, function(train) { %>
+        <tr>
+            <td><%= train.get('direction') %></td>
+            <td><%= train.get('duein') %></td>
+            <td><%= train.get('exparrival') %></td>
+            <td><%= train.get('lastlocation') %></td>
+            <td><%= train.get('destination') %></td>
+            <td><%= train.get('status') %></td>
+            <td><%= train.get('late') %></td>
+        </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</script>
+
+<script>
+    (function ($) {
+
+        /* Backbone Models*/
+        var Station = Backbone.Model.extend({
+            id: null,
+            name: null,
+            code:null,
+            lat: null,
+            lon: null
+        });
+
+        var Train = Backbone.Model.extend({
+            duein: null,
+            origin:null,
+            destination:null,
+            status:null,
+            lastlocation:null,
+            late:null,
+            exparrival:null,
+            direction:null
+        });
+
+        /* Backbone Collections */
+        var Stations = Backbone.Collection.extend({
+            url: 'http://www.corsproxy.com/api.irishrail.ie/realtime/realtime.asmx/getAllStationsXML_WithStationType?StationType=D',
+            fetch: function (options) {
+                options = options || {};
+                options.dataType = "xml";
+                return Backbone.Collection.prototype.fetch.call(this, options);
+            },
+            parse: function (data) {
+                var parsed = [];
+                $(data).find('objStation').each(function (index) {
+                    parsed.push(new Station({
+                        id: $(this).find('StationId').text(),
+                        name: $(this).find('StationDesc').text(),
+                        code: $(this).find('StationCode').text(),
+                        lat: $(this).find('StationLatitude').text(),
+                        lon: $(this).find('StationLongitude').text()
+                    }));
+                });
+                return parsed;
+            }
+        });
+
+        var Trains = Backbone.Collection.extend({
+            initialize: function(models, options) {
+                this.url = 'http://www.corsproxy.com/api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode='+ options.code;
+            },
+            fetch: function (options) {
+                options = options || {};
+                options.dataType = "xml";
+
+                return Backbone.Collection.prototype.fetch.call(this, options);
+            },
+            parse: function (data) {
+                var parsed = [];
+                $(data).find('objStationData').each(function (index) {
+                    parsed.push(new Station({
+                        duein: $(this).find('Duein').text(),
+                        origin: $(this).find('Origin').text(),
+                        destination: $(this).find('Destination').text(),
+                        status: $(this).find('Status').text(),
+                        lastlocation: $(this).find('Lastlocation').text(),
+                        late: $(this).find('Late').text(),
+                        exparrival: $(this).find('Exparrival').text(),
+                        direction: $(this).find('Direction').text()
+                    }));
+                });
+                return parsed;
+            }
+        });
+
+        /* Backbone Views*/
+        var StationListView = Backbone.View.extend({
+            el: $(".page"),
+            initialize: function () {
+                _.bindAll(this, 'render');
+
+                //this.collection.on("reset sync add remove", this.render);
+                this.listenTo(this.collection, "reset sync add remove", this.render);
+            },
+            render: function () {
+                console.log("render list");
+                var template = _.template($('#station-list-template').html(), {stations: this.collection.models});
+                this.$el.html(template);
+            }
+        });
+
+        var TrainListView = Backbone.View.extend({
+            el: $(".page"),
+            initialize: function () {
+                _.bindAll(this, 'render');
+
+                //this.collection.on("reset sync add remove", this.render);
+                this.listenTo(this.collection, "reset sync add remove", this.render);
+            },
+            render: function () {
+                console.log("render view");
+                var template = _.template($('#train-list-template').html(), {trains: this.collection.models});
+                this.$el.html(template);
+            }
+        });
+
+        var Router = Backbone.Router.extend({
+            routes: {
+                "": "home",
+                "home": "home",
+                "view/:id": "view"
+            },
+            home: function () {
+                console.log("route: home");
+                var stations = new Stations(null, {view: this});
+                new StationView({collection: stations});
+                stations.fetch();
+            },
+            view: function (code) {
+                console.log("route: view");
+                var trains = new Trains(null, {view: this, code:code});
+                new TrainListView({collection: trains});
+                trains.fetch();
+            }
+        });
+
+        var router = new Router;
+        Backbone.history.start();
+
+    })(jQuery);
+</script>
+</body>
+</html>
