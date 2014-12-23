@@ -16,8 +16,13 @@
     <div></div>
 </div>
 
-<script type="text/template" id="list-layout">
-    <div id="list-layout-region"></div>
+<script type="text/template" id="station-list-layout">
+    <div id="station-list-layout-region"></div>
+</script>
+
+<script type="text/template" id="train-list-layout">
+    <div id="direction-filter-layout-region"></div>
+    <div id="train-list-layout-region"></div>
 </script>
 
 <script type="text/template" id="station-list">
@@ -29,6 +34,10 @@
     <%= name %>
 </script>
 
+<script type="text/template" id="direction-filter-item">
+    <a class="btn" id="north-button">North</a>
+    <a class="btn" id="south-button">South</a>
+</script>
 
 <script type="text/template" id="train-list">
     <thead>
@@ -58,6 +67,10 @@
     <td><%= late %></td>
 </script>
 
+<script type="text/template" id="loading-view">
+    <div id="spinner"></div>
+</script>
+
 <script src="./assets/js/vendor/jquery.js"></script>
 <script src="./assets/js/vendor/jquery-ui-1.10.3.js"></script>
 <script src="./assets/js/vendor/json2.js"></script>
@@ -82,6 +95,8 @@
 <script src="./assets/js/apps/trains/trains_app.js"></script>
 <script src="./assets/js/apps/trains/list/trains_list_controller.js"></script>
 <script src="./assets/js/apps/trains/list/trains_list_view.js"></script>
+
+<script src="./assets/js/common/views.js"></script>
 
 <script type="text/javascript">
     TrainViewerApp.start();

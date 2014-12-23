@@ -1,6 +1,6 @@
 TrainViewerApp.module("StationsApp.List", function (List, TrainViewerApp, Backbone, Marionette, $, _) {
     List.Controller = {
-        listStations: function () {
+        listStations: function (code) {
             var fetching = TrainViewerApp.request("station:entities");
             var stationListLayout = new List.Layout();
 
@@ -12,9 +12,13 @@ TrainViewerApp.module("StationsApp.List", function (List, TrainViewerApp, Backbo
                 stationListLayout.on("show", function () {
                     stationListLayout.stationsRegion.show(stationCompView);
                 });
-                console.log("show - stationListLayout");
-                TrainViewerApp.stationsRegion.show(stationListLayout);
 
+                if(code) {
+                    stationCompView.on("show", function(){
+                        stationCompView.setSelectedStation(code);
+                    });
+                }
+                TrainViewerApp.stationsRegion.show(stationListLayout);
             });
         }
     }

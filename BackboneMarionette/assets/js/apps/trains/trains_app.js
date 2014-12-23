@@ -1,20 +1,14 @@
 TrainViewerApp.module("TrainsApp", function (TrainsApp, TrainViewerApp, Backbone, Marionette, $, _) {
-    TrainsApp.Router = Marionette.AppRouter.extend({
-        appRoutes: {
-            "view/:id": "listTrains"
-        }
-    });
 
     var API = {
-        listTrains: function (code) {
-            console.log("listTrains");
-            TrainsApp.List.Controller.listTrains(code);
+        listTrains: function (code, direction) {
+            console.log("listTrains: "+code);
+            TrainsApp.List.Controller.listTrains(code, direction);
         }
     };
 
-    TrainViewerApp.addInitializer(function () {
-        new TrainsApp.Router({
-            controller: API
-        });
+    TrainViewerApp.on("trains:list", function (code, direction) {
+        TrainViewerApp.navigate("#view/"+code+"/"+direction);
+        API.listTrains(code, direction);
     });
 });

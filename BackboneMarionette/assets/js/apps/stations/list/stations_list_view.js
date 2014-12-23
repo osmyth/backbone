@@ -1,16 +1,16 @@
 TrainViewerApp.module("StationsApp.List", function (List, TrainViewerApp, Backbone, Marionette, $, _) {
 
     List.Layout = Marionette.LayoutView.extend({
-        template: "#list-layout",
+        template: "#station-list-layout",
         regions: {
-            stationsRegion: "#list-layout-region"
+            stationsRegion: "#station-list-layout-region"
         }
     });
 
     List.StationItemView = Marionette.ItemView.extend({
         tagName: "option",
         template: "#station-list-item",
-        onRender: function() {
+        onRender: function () {
             this.$el.attr('value', this.model.get('code'));
         }
     });
@@ -23,10 +23,21 @@ TrainViewerApp.module("StationsApp.List", function (List, TrainViewerApp, Backbo
         events: {
             'change': 'viewTrains'
         },
-        viewTrains: function(event){
-            console.log($('.station-combo').val());
-            code = $('.station-combo').val();
-            TrainViewerApp.navigate("#view/"+code, {trigger: true});
+        viewTrains: function () {
+            var code = this.$el.val();
+            console.log(code);
+            var direction = "";
+            if (TrainViewerApp.getCurrentRoute().indexOf("south")!=-1){
+                direction = "south";
+            } else {
+                direction = "north";
+            }
+
+            TrainViewerApp.trigger("trains:list", code, direction);
+        },
+        setSelectedStation: function(code){
+            this.$el.val(code);
+            this.viewTrains();
         }
     });
 });
