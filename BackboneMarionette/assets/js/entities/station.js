@@ -13,7 +13,7 @@ TrainViewerApp.module("Entities", function (Entities, TrainViewerApp, Backbone, 
 
     Entities.Stations = Backbone.Collection.extend({
         model: Entities.Station,
-        url: 'http://www.corsproxy.com/api.irishrail.ie/realtime/realtime.asmx/getAllStationsXML_WithStationType?StationType=D',
+        url: 'https://www.crossorigin.me/http://api.irishrail.ie/realtime/realtime.asmx/getAllStationsXML_WithStationType?StationType=D',
         fetch: function (options) {
             options = options || {};
             options.dataType = "xml";

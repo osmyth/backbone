@@ -96,7 +96,7 @@
 
         /* Backbone Collections */
         var Stations = Backbone.Collection.extend({
-            url: 'http://www.corsproxy.com/api.irishrail.ie/realtime/realtime.asmx/getAllStationsXML_WithStationType?StationType=D',
+            url: 'https://www.crossorigin.me/http://api.irishrail.ie/realtime/realtime.asmx/getAllStationsXML_WithStationType?StationType=D',
             fetch: function (options) {
                 options = options || {};
                 options.dataType = "xml";
@@ -119,7 +119,7 @@
 
         var Trains = Backbone.Collection.extend({
             initialize: function(models, options) {
-                this.url = 'http://www.corsproxy.com/api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode='+ options.code;
+                this.url = 'https://www.crossorigin.me/http://api.irishrail.ie/realtime/realtime.asmx/getStationDataByCodeXML?StationCode='+ options.code;
             },
             fetch: function (options) {
                 options = options || {};
