@@ -185,7 +185,7 @@
             home: function () {
                 console.log("route: home");
                 var stations = new Stations(null, {view: this});
-                new StationView({collection: stations});
+                new StationListView({collection: stations});
                 stations.fetch();
             },
             view: function (code) {
