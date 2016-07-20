@@ -10,6 +10,8 @@
     <script src="libs/bootstrap.min.js"
             integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
             crossorigin="anonymous"></script>
+
+    <script src="libs/progressbar.js"></script>
     <script src="app.js"></script>
 
 </head>
@@ -25,14 +27,59 @@
         display: none;
         margin-top: 20px
     }
+
+    .item {
+        display: inline-block;
+        margin: 10px;
+        height:100px;
+        width:100px;
+    }
+
+    .item-prog {
+        position:absolute;
+        height:inherit;
+        width:inherit;
+    }
+
+    .item-mins {
+        position:absolute;
+        height:inherit;
+        width:inherit;
+        text-align: center;
+        font-size: 2em;
+        padding-top:20px
+    }
+
+    .item-name {
+        position:absolute;
+        height:inherit;
+        width:inherit;
+        text-align: center;
+        font-size: 1em;
+        padding-top:55px
+
+    }
 </style>
 
 <div class="app container">
     <select class="input-large form-control station-list"></select>
+
+    <div class="item">
+        <div id='prog1' class="item-prog"></div>
+        <div class="item-mins">44</div>
+        <div class="item-name">Howth</div>
+    </div>
+
+    <div class="item">
+        <div id='prog2' class="item-prog"></div>
+        <div class="item-mins">06</div>
+        <div class="item-name">Bray</div>
+    </div>
+
     <div class="train-list">
         <table class="table"></table>
     </div>
-
 </div>
+
 </body>
 </html>

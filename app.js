@@ -36,7 +36,8 @@ var APP = {
                     };
                     that.stations.push(station);
                 });
-                that.initGeo();
+                //that.initGeo();
+                that.updateStationList();
             },
             error: function (error) {
                 console.log(error);
@@ -49,6 +50,7 @@ var APP = {
         this.stations.forEach(function (station) {
             $stationList.append(this.getStationOptionHTML(station.code, station.name));
         }, this);
+        $stationList.trigger('change');
     },
 
     getTrainsForStation: function (station) {
@@ -139,4 +141,28 @@ var APP = {
 
 $(document).ready(function () {
     APP.init();
+
+    var bar1  = new ProgressBar.Circle('#prog1', {
+        strokeWidth: 6,
+        easing: 'easeInOut',
+        duration: 600,
+        color: 'green',
+        trailColor: '#eee',
+        trailWidth: 1,
+        svgStyle: null
+    });
+
+    bar1.animate(0.4);  // Number from 0.0 to 1.0
+
+    var bar2  = new ProgressBar.Circle('#prog2', {
+        strokeWidth: 6,
+        easing: 'easeInOut',
+        duration: 600,
+        color: 'red',
+        trailColor: '#eee',
+        trailWidth: 1,
+        svgStyle: null
+    });
+
+    bar2.animate(0.04);  // Number from 0.0 to 1.0
 });
